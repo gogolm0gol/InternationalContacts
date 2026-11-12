@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:InternationalContacts.Models"
+             x:Class="InternationalContacts.MainPage"
+             Title="Міжнародні контакти">
+
+    <ContentPage.Resources>
+        <Style TargetType="Border">
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Stroke" Value="{AppThemeBinding Light=#C8C8C8, Dark=#555555}"/>
+            <Setter Property="StrokeShape" Value="RoundRectangle 8"/>
+        </Style>
+        <Style x:Key="SectionTitle" TargetType="Label">
+            <Setter Property="FontAttributes" Value="Bold"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="14"
+                             MaximumWidthRequest="900" HorizontalOptions="Center">
+
+            <Label Text="Міжнародні контакти" FontSize="24" FontAttributes="Bold"/>
+
+            <!-- Крок 1 -->
+            <Border>
+                <VerticalStackLayout Spacing="8">
+                    <Label Style="{StaticResource SectionTitle}" Text="Крок 1. Метод пошуку (обов'язково)"/>
+                    <Picker Title="Оберіть метод пошуку"
+                            ItemsSource="{Binding StrategyNames}"
+                            SelectedIndex="{Binding SelectedStrategyIndex}"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Крок 2 -->
+            <Border>
+                <VerticalStackLayout Spacing="8">
+                    <Label Style="{StaticResource SectionTitle}" Text="Крок 2. Файли"/>
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button Grid.Column="0" Text="Обрати XML" Command="{Binding SelectXmlCommand}"/>
+                        <Button Grid.Column="1" Text="Обрати XSL" Command="{Binding SelectXslCommand}"/>
+                    </Grid>
+                    <Label Text="{Binding XmlFileName, StringFormat='XML: {0}'}"/>
+                    <Label Text="{Binding XslFileName, StringFormat='XSL: {0}'}"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Крок 3 -->
+            <Border>
+                <VerticalStackLayout Spacing="8">
+                    <Label Style="{StaticResource SectionTitle}" Text="Крок 3. Параметри пошуку (необов'язкові)"/>
+                    <Entry Placeholder="П.І.П. (частина імені)" Text="{Binding FullNameText}"/>
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="8">
+                        <Picker Grid.Row="0" Grid.Column="0" Title="Факультет"
+                                ItemsSource="{Binding Faculties}" SelectedItem="{Binding SelectedFaculty}"/>
+                        <Picker Grid.Row="0" Grid.Column="1" Title="Кафедра"
+                                ItemsSource="{Binding Departments}" SelectedItem="{Binding SelectedDepartment}"/>
+                        <Picker Grid.Row="1" Grid.Column="0" Title="Спеціальність"
+                                ItemsSource="{Binding Specialties}" SelectedItem="{Binding SelectedSpecialty}"/>
+                        <Picker Grid.Row="1" Grid.Column="1" Title="Вид співробітництва"
+                                ItemsSource="{Binding CooperationTypeNames}"
+                                SelectedIndex="{Binding SelectedTypeIndex}"/>
+                    </Grid>
+                    <HorizontalStackLayout Spacing="6">
+                        <CheckBox IsChecked="{Binding UseDates}" VerticalOptions="Center"/>
+                        <Label Text="Фільтр за періодом" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10" IsEnabled="{Binding UseDates}">
+                        <DatePicker Grid.Column="0" Date="{Binding DateFrom}"/>
+                        <DatePicker Grid.Column="1" Date="{Binding DateTo}"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Дії -->
+            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8">
+                <Button Grid.Column="0" Text="Пошук" Command="{Binding SearchCommand}"/>
+                <Button Grid.Column="1" Text="У HTML" Command="{Binding TransformCommand}"/>
+                <Button Grid.Column="2" Text="Clear" Command="{Binding ClearCommand}"/>
+                <Button Grid.Column="3" Text="Вихід" Command="{Binding ExitCommand}"/>
+            </Grid>
+
+            <Label Text="{Binding StatusText}" FontAttributes="Italic"/>
+
+            <!-- Результати -->
+            <Border>
+                <VerticalStackLayout Spacing="8">
+                    <Label Style="{StaticResource SectionTitle}" Text="Результати пошуку"/>
+                    <CollectionView ItemsSource="{Binding Results}" HeightRequest="280">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Researcher">
+                                <Border Margin="0,4" Padding="8">
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label Text="{Binding FullName}" FontAttributes="Bold"/>
+                                        <Label Text="{Binding Faculty}"/>
+                                        <Label Text="{Binding Department}"/>
+                                        <Label Text="{Binding Specialty}"/>
+                                        <Label Text="{Binding ExtraText}" FontSize="12"/>
+                                        <Label Text="{Binding CooperationsText}" FontSize="12"/>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- HTML -->
+            <Border>
+                <VerticalStackLayout Spacing="8">
+                    <Label Style="{StaticResource SectionTitle}" Text="Результат трансформації (HTML)"/>
+                    <WebView Source="{Binding HtmlSource}" HeightRequest="320"/>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
